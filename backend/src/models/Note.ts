@@ -1,15 +1,19 @@
-import mongoose from "mongoose";
+import mongoose, { SchemaTypeOptions } from "mongoose";
 import { title } from "node:process";
 
 const noteSchema = new mongoose.Schema(
     {
         title:{
             type: String,
-            require : true
+            required : true
         },
         content : {
-            type: String,
-            require : true
+            type: String
+        },
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true
         }
     },
     {

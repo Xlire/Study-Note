@@ -13,7 +13,7 @@ button {
 
 textarea {
     width: 100%;
-    min-height: 400px;
+    min-height: 500px;
     resize: vertical;
 }
 
@@ -48,11 +48,14 @@ textarea {
 }
 
 aside {
+    display: flex;
     width: 250px;
     padding: 20px;
     border-right: 1px solid #ddd;
     background: #f7f7f7;
     overflow-y: auto;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 aside h1 {
@@ -100,7 +103,7 @@ main {
 
 .note-content {
     width: 100%;
-    min-height: 400px;
+    min-height: 450px;
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 6px;
@@ -216,4 +219,81 @@ main > p {
 .delete-button:focus-visible {
     outline: 2px solid #555;
     outline-offset: 2px;
+}
+
+.log-out-button{
+    margin-top: auto;
+    margin-bottom: 20px;
+    margin-left: 16px;
+    margin-right: 16px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.log-out-button:hover {
+    opacity: 0.85;
+}
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content:center;
+    align-items: center;
+}
+
+.login-container {
+    width: 350px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.login-container input {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+}
+
+.login-container input:focus {
+    border-color: #888;
+    box-shadow: 0 0 0 2px #eee;
+}
+
+.login-container button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #222;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    /* margin: auto;
+    width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center; */
+}
+
+.login-container button:hover {
+    background: #444;
+}
+
+
+.login-container h2 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.login-container p {
+    margin: 0 0 10px;
+    color: #777;
+    font-size: 14px;
 }

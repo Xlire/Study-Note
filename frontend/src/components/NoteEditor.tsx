@@ -7,7 +7,7 @@ interface NoteEditorProps {
     originalContent: string
     originalTitle: string
     onSave: () => void
-    onDelete: (id : string) => void
+    onDelete: () => void
 }
 
 // <input onChange={(e) => 
@@ -41,16 +41,13 @@ const NoteEditor = ({
             <div className="note-actions">
                 <button 
                 className="save-button" 
-                disabled={
-                    selectedNote.content === originalContent && selectedNote.title === originalTitle
-                    } 
+                disabled={selectedNote.content === originalContent && selectedNote.title === originalTitle} 
                 onClick={onSave}
                 >
                     Save
                 </button>
                 <button
-                    className="delete-button" onClick={() =>
-                        onDelete(selectedNote._id)}
+                    className="delete-button" onClick={onDelete}
                 >
                     Delete
                 </button>

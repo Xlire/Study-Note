@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import api from "./lib/api";
+import api, { refreshAccessToken, setApiAccessToken, setAuthExpiredHandler } from "./lib/api";
 import type {Note} from "./types"
 import toast, {Toaster} from 'react-hot-toast'
 
 import Sidebar from "./components/Sidebar";
 import NoteEditor from "./components/NoteEditor"
+import Login from "./components/Login";
 
 
 function App() {
@@ -12,8 +13,35 @@ function App() {
     const [selectedNote, setSelectedNote] = useState<Note>()
     const [originalContent, setOriginalContent] = useState("")
     const [originalTitle, setOriginalTitle] = useState("")
+    const [accessToken, setAccessToken] = useState<string | null>(null)
+    
+    useEffect(() => {
+        const restoreSession = async () => {
+        try{   
+            const token = await refreshAccessToken()
+            setAccessToken(token)
+        } catch(error){
+        console.log("No existing session")
+        }}
+
+        restoreSession()
+    },[])
+
+    useEffect(() => {
+        setAuthExpiredHandler(() =>{
+            setAccessToken(null)
+            toast.error("Your session has expired. Please log in again")
+        })
+
+        return () => {
+            setAuthExpiredHandler(null)
+        }
+    },[])
 
     useEffect(()=>{
+        
+        if(!accessToken) return
+
         const fetchNotes = async () => {
             try {
             const response = await api.get<Note[]>("/notes")
@@ -24,14 +52,13 @@ function App() {
             }
         }  
         fetchNotes() 
-    }, [])
+    }, [accessToken])
 
     const handleSave = async () => {
         if(!selectedNote) return
 
         if(selectedNote.title.trim() === ""){
             toast.error("Title can't be empty")
-            console.log(originalTitle)
             setSelectedNote({
                 ...selectedNote,
                 title : originalTitle
@@ -55,7 +82,7 @@ function App() {
                  note._id === response.data._id ? response.data : note
                 ))
         toast.success("Note saved!")
-        console.log(response.data)
+        // console.log(response.data)
         }
 
         catch(error){
@@ -70,7 +97,7 @@ function App() {
             const response = await api.post<Note>("/notes",
             {
                 title : "Untitled note",
-                content : ""
+                content : "abc"
             }
             )
 
@@ -87,14 +114,13 @@ function App() {
     }
 
     const handleDelete = async (id : string) => {
-        if (!selectedNote) return
 
         if(!window.confirm("Are you sure to delete this?")) return
 
         try{
-            api.delete<Note>(`/notes/${id}`)
+            await api.delete<Note>(`/notes/${id}`)
             setNotes(notes.filter(note => note._id !== id))
-            if(selectedNote._id === id){
+            if(selectedNote?._id === id){
                 setSelectedNote(undefined)
             }
             console.log("Note with id:",id,"deleted")
@@ -106,13 +132,19 @@ function App() {
         }
     }
 
+    const handleDeleteSelectedNote = () => {
+        console.log("handleDeleteSelectedNote")
+        if (!selectedNote) return
+        handleDelete(selectedNote._id)
+    }
+
     const handleSelectNote = (note: Note) => {
         const hasUnsavedChanges = (selectedNote &&
-                                    (
-                                        selectedNote.title !== originalTitle ||
-                                        selectedNote.content !== originalContent
-                                    )
-                                )
+        (
+            selectedNote.title !== originalTitle ||
+            selectedNote.content !== originalContent
+        )
+        )
         if(hasUnsavedChanges){
             if(!window.confirm(
                 "You have unsaved changes. Are you sure you want to leave this note?"
@@ -124,42 +156,61 @@ function App() {
         setOriginalContent(note.content)
     }
 
+    const handleTitleChange = (title:string) => {
+        if(!selectedNote) return
+
+        setSelectedNote({
+        ...selectedNote,
+        title,
+        })
+    }
+
+    const handleContentChange = (content : string) =>{
+        if(!selectedNote) return
+
+        setSelectedNote({...selectedNote, content})
+    }
+
+    const handleLogOut = async () =>{
+        try{
+            await api.post("/logout")
+            setAccessToken(null)
+            setApiAccessToken(null)
+        } catch(error){
+            console.error("Error in log out:", error)
+            toast.error("Failed to log out")
+        }
+    }
+
+    const isLoggedIn = accessToken !== null
+
     return (
         <>
         <Toaster/>
+        {!isLoggedIn ? (<Login
+            onLogin={setAccessToken}
+        />) : (
         <div className="app">
             <Sidebar
                 notes={notes}
                 selectedNote={selectedNote}
-                originalTitle={originalTitle}
-                originalContent={originalContent}
                 onSelectNote={handleSelectNote}
                 onCreateNote={handleCreateNote}
                 onDeleteNote={handleDelete}
+                onLogOut={handleLogOut}
             />
             <NoteEditor
                 selectedNote={selectedNote}
-                onTitleChange={(title) => {
-                    if(!selectedNote) return
-
-                    setSelectedNote({
-                    ...selectedNote,
-                    title,
-                    })
-                }
-                }
-                onContentChange={(content) =>{
-                    if(!selectedNote) return
-
-                    setSelectedNote({...selectedNote, content})
-                }}
+                onTitleChange={handleTitleChange}
+                onContentChange={handleContentChange}
                 originalContent={originalContent}
                 originalTitle={originalTitle    }
                 onSave={handleSave}
-                onDelete={handleDelete}
+                onDelete={handleDeleteSelectedNote}
             />
             
-        </div>
+        </div>)
+        }
         </>
     );
 }
