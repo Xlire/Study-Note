@@ -4,6 +4,7 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 
 import RefreshToken from "../models/RefreshToken";
+import refresh from "./refreshController";
 
 export const login = async (req: Request, res: Response) => {
     try{
@@ -52,13 +53,14 @@ export const login = async (req: Request, res: Response) => {
         )
 
         const refreshTokenHashed = await bcrypt.hash(refreshToken, 10)
-
-        await RefreshToken.create({
+        
+        const savedRefreshToken = await RefreshToken.create({
             user: user._id,
             tokenHash: refreshTokenHashed,
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             // expiresAt: new Date(Date.now() + 20 * 1000),
         })
+        
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,

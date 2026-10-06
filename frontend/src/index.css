@@ -15,6 +15,7 @@ textarea {
     width: 100%;
     min-height: 500px;
     resize: vertical;
+    /* background-color: cadetblue; */
 }
 
 .note-item {
@@ -44,11 +45,21 @@ textarea {
 
 .app{
     display: flex;
-     height: 100vh;
+    align-items: flex-start;
+}
+
+main {
+    flex: 1;
+    min-width: 0;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
 }
 
 aside {
     display: flex;
+    height: 100vh;
     width: 250px;
     padding: 20px;
     border-right: 1px solid #ddd;
@@ -56,6 +67,9 @@ aside {
     overflow-y: auto;
     flex-direction: column;
     min-height: 100vh;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
 }
 
 aside h1 {
@@ -77,16 +91,6 @@ aside h1 {
 
 .new-note-button:hover {
     background: #444;
-}
-
-main {
-    flex: 1;
-    min-width: 0;
-    height: 100vh;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    background: #fff;
 }
 
 .note-title{
@@ -296,4 +300,186 @@ main > p {
     margin: 0 0 10px;
     color: #777;
     font-size: 14px;
+}
+
+.ai-summary {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background: #f8f9fb;
+}
+
+.ai-summary h3 {
+    margin: 0 0 12px;
+    font-size: 18px;
+}
+
+.ai-summary p {
+    margin: 0;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.ai-button,
+.summarize-button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    background: #e8eaff;
+    color: #303a8c;
+    cursor: pointer;
+}
+.ai-button:hover:not(:disabled),
+.summarize-button:hover:not(:disabled) {
+    background: #d9ddff;
+}
+
+.ai-button:disabled,
+.summarize-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.ai-button{
+    width: 120px;
+    margin-left: auto;
+}
+
+.chat-panel {
+    width: 350px;
+    height: 100vh;
+    border-left: 1px solid #ddd;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    padding: 16px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.chat-header button {
+    border: none;
+    background: none;
+    font-size: 24px;
+}
+
+.chat-content {
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.selected-text {
+    padding: 12px;
+    margin-bottom: 16px;
+    border-left: 3px solid #777;
+    background: #f5f5f5;
+    white-space: pre-wrap;
+    font-size: 12px;
+    /* margin-top: 16px; */
+}
+
+.chat-input {
+    margin-top: auto;
+    padding: 16px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    gap: 8px;
+}
+
+.chat-input textarea {
+    flex: 1;
+    min-height: 100px;
+    resize: none;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-family: Arial, sans-serif;
+    line-height: 1.4;
+}
+
+.chat-input textarea:focus {
+    border-color: #888;
+    box-shadow: 0 0 0 2px #eee;
+}
+
+.chat-input button {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #303a8c;
+    color: white;
+}
+
+.chat-input button:hover:not(:disabled) {
+    background: #252d70;
+}
+
+.chat-input button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.chat-input button {
+    align-self: flex-end;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    background: #303a8c;
+    color: white;
+    align-self: center;
+}
+
+.chat-input button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.chat-message.user {
+    align-self: flex-end;
+    background: #e8eaff;
+    max-width: 85%;
+}
+
+.chat-message.assistant {
+    align-self: flex-start;
+    background: #f1f1f1;
+    max-width: 85%;
+}
+
+.chat-message {
+    padding: 10px 12px;
+    border-radius: 10px;
+    overflow-wrap: anywhere;
+}
+
+.chat-message p {
+    margin: 0 0 10px;
+}
+
+.chat-message p:last-child {
+    margin-bottom: 0;
+}
+
+.chat-message ul,
+.chat-message ol {
+    margin: 8px 0;
+    padding-left: 20px;
 }

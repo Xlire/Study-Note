@@ -1,1 +1,6 @@
-{}
+{
+  "dependencies": {
+    "react-markdown": "^10.1.0",
+    "react-spinners": "^0.17.1"
+  }
+}

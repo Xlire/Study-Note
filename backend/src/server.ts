@@ -10,7 +10,7 @@ import registerRoutes from "./routes/registerRoutes";
 import loginRoutes from "./routes/loginRoutes";
 import refreshRoutes from "./routes/refreshRoutes";
 import logoutRoutes from "./routes/logoutRoutes";
-
+import aiRoutes from "./routes/aiRoutes";
 
 dotenv.config();
 
@@ -40,10 +40,12 @@ app.use("/api/logout", logoutRoutes)
 
 app.use(authenticate)
 app.use("/api/notes", noteRoutes) 
+app.use("/api/ai", aiRoutes)
 
 connectDB().then(() => {
     app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 }); 
 })
+
 
