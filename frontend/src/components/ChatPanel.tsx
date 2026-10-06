@@ -25,6 +25,14 @@ function ChatPanel({
     const [messages, setMessages] = useState<ChatMessage[]>([])
     const [isSendingChat, setIsSendingChat] = useState(false)
 
+    const messagesEndRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({
+        behavior: "smooth"
+    })
+    }, [messages, isSendingChat])
+
     const handleSend = async () => {
         if(!message.trim() || isSendingChat) return
 
@@ -53,9 +61,16 @@ function ChatPanel({
             setSelectedText("")
         } catch (error) {
             console.error("Error chatting with AI:", error)
-        } finally{
-            setIsSendingChat(false)
-        }
+
+            const errorMessage: ChatMessage = {
+                role: "ai",
+                content: "Sorry, I couldn't get a response right now. Please try again."
+            }
+
+            setMessages(prev => [...prev, errorMessage])
+            } finally{
+                setIsSendingChat(false)
+            }
     }
 
     return (
@@ -93,12 +108,20 @@ function ChatPanel({
                         <BeatLoader size={8} color="#7c3aed" />
                     </div>
                 )}
+
+                <div ref={messagesEndRef} />
             </div>
 
             <div className="chat-input">
                 <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={(e) => {
+                    if(e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault()
+                        handleSend()
+                    }
+                }}
                 placeholder="Ask me anything"
                 />
 

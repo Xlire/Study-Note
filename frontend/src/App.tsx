@@ -7,6 +7,7 @@ import Sidebar from "./components/Sidebar";
 import NoteEditor from "./components/NoteEditor"
 import Login from "./components/Login";
 import ChatPanel from "./components/ChatPanel";
+import Register from "./components/Register";
 
 function App() {
     const [notes, setNotes] = useState<Note[]>([])
@@ -20,6 +21,7 @@ function App() {
     const [explaining, setExplaining] = useState(false)
     const [isChatOpen, setIsChatOpen] = useState(false)
     const [selectedText, setSelectedText] = useState("")
+    const [showRegister, setShowRegister] = useState(false)
 
     useEffect(() => {
         const restoreSession = async () => {
@@ -254,9 +256,18 @@ function App() {
     return (
         <>
         <Toaster/>
-        {!isLoggedIn ? (<Login
-            onLogin={setAccessToken}
-        />) : (
+        {!isLoggedIn ? (
+            showRegister? (
+                <Register 
+                    onSwitchToLogin={() => setShowRegister(false)}
+                />
+            ) : (
+                <Login
+                    onLogin={setAccessToken}
+                    onSwitchToRegister={() => setShowRegister(true)}
+                />
+            )
+        ) : (
         <div className="app">
             <Sidebar
                 notes={notes}
@@ -282,6 +293,7 @@ function App() {
                 explaining={explaining}
                 onAskAboutText={handleAskAboutText}
                 setIsChatOpen={setIsChatOpen}
+                setSelectedText={setSelectedText}
             />
             {isChatOpen && (
                 <ChatPanel

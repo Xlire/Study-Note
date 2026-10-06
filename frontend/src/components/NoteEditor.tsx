@@ -17,8 +17,7 @@ interface NoteEditorProps {
     explain: string,
     explaining: boolean,
     onAskAboutText: (text: string) => void,
-    setIsChatOpen: React.Dispatch<React.SetStateAction<boolean>>
-
+    setIsChatOpen: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
 // <input onChange={(e) => 
@@ -39,11 +38,10 @@ const NoteEditor = ({
     explain,
     explaining,
     onAskAboutText,
-    setIsChatOpen
+    setIsChatOpen,
 } : NoteEditorProps) =>
 {
     const [currentSelection, setCurrentSelection] = useState("")
-
     return(
     <main>
         {selectedNote ? (
@@ -63,10 +61,22 @@ const NoteEditor = ({
                 const selected = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd)
 
                 setCurrentSelection(selected)
-            }}/>
+            }}
+            onBlur={() => {
+                setCurrentSelection("")
+            }}
+            onMouseUp={(e) => {
+                const textarea = e.currentTarget
+
+                if (textarea.selectionStart === textarea.selectionEnd) {
+                    setCurrentSelection("")
+                }
+            }}
+            />
 
             {currentSelection && (
                 <button className="ask-text-button"
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={() => {
                     onAskAboutText(currentSelection)
                     setCurrentSelection("")
@@ -91,10 +101,10 @@ const NoteEditor = ({
                 >
                     Delete
                 </button>
-                <button className="summarize-button" onClick={onSummarize} disabled={isSummarizing}>
+                <button className="summarize-button" onClick={onSummarize} disabled={isSummarizing || !selectedNote.content.trim()}>
                     {isSummarizing? "Summarizing..." : "Summarize note"}
                 </button>
-                <button className="summarize-button" onClick={onExplain} disabled={explaining}>
+                <button className="summarize-button" onClick={onExplain} disabled={explaining || !selectedNote.content.trim()}>
                     {explaining? "Explaining..." : "Explain note"}
                 </button>
                 <button className="ai-button" onClick={() => (setIsChatOpen(prev => !prev))}>

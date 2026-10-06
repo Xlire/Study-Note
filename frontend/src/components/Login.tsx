@@ -2,7 +2,16 @@ import { useState } from "react"
 import api, { setApiAccessToken } from "../lib/api"
 import toast from "react-hot-toast"
 
-function Login({onLogin} : {onLogin: (token:string) => void}) {
+interface LoginProps {
+    onLogin: (token: string) => void
+    onSwitchToRegister: () => void
+}
+
+function Login({
+    onLogin,
+    onSwitchToRegister
+} : LoginProps) { 
+
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
 
@@ -46,6 +55,12 @@ function Login({onLogin} : {onLogin: (token:string) => void}) {
 
                 <button onClick={handleLogin}>
                 Login
+                </button>
+                <button
+                    className="switch-auth-button"
+                    onClick={onSwitchToRegister}
+                >
+                    Don't have an account? Register
                 </button>
             </div>
         </div>

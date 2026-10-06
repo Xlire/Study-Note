@@ -321,6 +321,25 @@ main > p {
     white-space: pre-wrap;
 }
 
+.ai-summary p {
+    margin: 0 0 10px;
+    line-height: 1.6;
+}
+
+.ai-summary p:last-child {
+    margin-bottom: 0;
+}
+
+.ai-summary ul,
+.ai-summary ol {
+    margin: 8px 0;
+    padding-left: 22px;
+}
+
+.ai-summary li {
+    margin-bottom: 4px;
+}
+
 .ai-button,
 .summarize-button {
     padding: 10px 18px;
@@ -482,4 +501,35 @@ main > p {
 .chat-message ol {
     margin: 8px 0;
     padding-left: 20px;
+}
+
+.switch-auth-button {
+    background: none !important;
+    color: #303a8c !important;
+    padding: 4px !important;
+    font-size: 13px !important;
+}
+
+.switch-auth-button:hover {
+    background: none !important;
+    text-decoration: underline;
+}
+
+.ask-text-button {
+    align-self: flex-start;
+    margin-top: 10px;
+    padding: 9px 14px;
+    border: 1px solid #7c3aed;
+    border-radius: 6px;
+    background: #f3e8ff;
+    color: #6d28d9;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.ask-text-button:hover {
+    background: #e9d5ff;
+    border-color: #6d28d9;
 }
