@@ -9,6 +9,6 @@ router.get("/", getNotes)
 router.get("/:id", validateNoteId, getNoteById)
 router.put("/:id", validateString("title", 200), validateString("content", 100000), validateNoteId, updateNoteById)
 router.delete("/:id", validateNoteId, deleteNoteById)
-router.post("/", validateString("title", 200), validateString("content", 100000), createNote)
+router.post("/", validateString("title", 200), validateString("content", 100000, false), createNote)
 
 export default router

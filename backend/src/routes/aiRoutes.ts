@@ -5,8 +5,8 @@ import { validateString } from "../middleware/validateBody"
 
 const router = express.Router()
 
-router.post("/summarize", validateString("noteContent", 100000), aiLimiter, summarize)
-router.post("/explain", validateString("noteContent", 100000), aiLimiter, explain)
+router.post("/summarize", validateString("content", 100000), aiLimiter, summarize)
+router.post("/explain", validateString("content", 100000), aiLimiter, explain)
 router.post("/chat",
     validateString("noteContent", 100000),
     validateString("question", 5000),

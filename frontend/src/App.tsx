@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect} from "react";
 import api, { refreshAccessToken, setApiAccessToken, setAuthExpiredHandler } from "./lib/api";
 import type {Note} from "./types"
 import toast, {Toaster} from 'react-hot-toast'
@@ -105,7 +105,7 @@ function App() {
             const response = await api.post<Note>("/notes",
             {
                 title : "Untitled note",
-                content : "abc"
+                content : ""
             }
             )
 
@@ -131,6 +131,8 @@ function App() {
             if(selectedNote?._id === id){
                 setSelectedNote(undefined)
             }
+
+            setIsChatOpen(false)
             console.log("Note with id:",id,"deleted")
             toast.success("Success delete note")
         }

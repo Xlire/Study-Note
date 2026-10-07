@@ -7,7 +7,6 @@ export const validateString = (
 ) => {
     return (req: Request, res: Response, next: NextFunction) => {
         const value = req.body[field]
-
         if (value === undefined && !required) {
             return next()
         }

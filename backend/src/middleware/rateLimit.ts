@@ -26,6 +26,10 @@ export const aiLimiter = rateLimit({
     standardHeaders: "draft-8",
     legacyHeaders: false,
     keyGenerator: (req) => {
+        if (!req.user) {
+            throw new Error("Authenticated user is missing")
+        }
+
         return `user:${req.user.userId}`
     },
     message: {

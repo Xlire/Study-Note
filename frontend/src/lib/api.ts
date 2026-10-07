@@ -67,7 +67,7 @@ api.interceptors.response.use(
 
             originalRequest._retry = true
             try {
-                const token = await refreshAccessToken()
+                await refreshAccessToken()
 
                 return api(originalRequest)
             } catch (refreshError) {
