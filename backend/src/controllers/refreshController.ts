@@ -34,7 +34,6 @@ export const refresh = async (req: Request, res: Response) => {
 
             if(isMatch){
                 matchedToken = token
-                // console.log(token.tokenHash)
                 break
             }
         }
@@ -52,6 +51,7 @@ export const refresh = async (req: Request, res: Response) => {
 }
 
         if(matchedToken.expiresAt < new Date()){
+
             return res.status(403).json({
                 message: "Refresh token has expired"
             })

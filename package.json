@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
     "react-markdown": "^10.1.0",
     "react-spinners": "^0.17.1"
   }

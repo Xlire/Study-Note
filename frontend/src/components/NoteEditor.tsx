@@ -20,9 +20,6 @@ interface NoteEditorProps {
     setIsChatOpen: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
-// <input onChange={(e) => 
-// onContentChange(e.targe.value)}>
-// onContentChange()
 const NoteEditor = ({
     selectedNote,
     summary,

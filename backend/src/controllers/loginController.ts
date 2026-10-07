@@ -16,6 +16,18 @@ export const login = async (req: Request, res: Response) => {
             })
         }
 
+        if (typeof username !== "string" || typeof password !== "string") {
+            return res.status(400).json({
+                message: "Username and password must be strings"
+            })
+        }
+
+        if (username.length > 30 || password.length > 100) {
+            return res.status(400).json({
+                message: "Invalid username or password"
+            })
+        }
+
         const user = await User.findOne({username})
 
         if(!user){
@@ -58,13 +70,12 @@ export const login = async (req: Request, res: Response) => {
             user: user._id,
             tokenHash: refreshTokenHashed,
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-            // expiresAt: new Date(Date.now() + 20 * 1000),
         })
         
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: false,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
             maxAge: 7*24*60*60*1000
         })

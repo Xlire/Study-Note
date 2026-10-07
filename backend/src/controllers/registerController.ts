@@ -12,6 +12,24 @@ export const register = async (req: Request, res: Response) => {
             })
         }
 
+        if (typeof username !== "string" || typeof password !== "string") {
+            return res.status(400).json({
+                message: "Username and password must be strings"
+            })
+        }
+
+        if (username.length < 3 || username.length > 30) {
+            return res.status(400).json({
+                message: "Username must be between 3 and 30 characters"
+            })
+        }
+
+        if (password.length < 8 || password.length > 100) {
+            return res.status(400).json({
+                message: "Password must be between 8 and 100 characters"
+            })
+        }
+
         const existingUser = await User.findOne({username})
 
         if(existingUser){

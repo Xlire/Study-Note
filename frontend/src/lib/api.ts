@@ -4,6 +4,12 @@ let apiAccessToken : string | null = null
 
 let onAuthExpired : (() => void) | null = null
 
+let aiUsesRemaining: number | null = null
+
+export function getAiUsesRemaining() {
+    return aiUsesRemaining
+}
+
 export function setApiAccessToken(token: string | null) {
     apiAccessToken = token
 }
@@ -39,6 +45,16 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
     (response) => {
+        const rateLimit = response.headers["ratelimit"]
+
+        if (rateLimit && response.config.url?.includes("/ai/")) {
+            const match = rateLimit.match(/r=(\d+)/)
+
+            if (match) {
+                aiUsesRemaining = Number(match[1])
+            }
+        }
+
         return response
     },
     async (error) => {
@@ -53,8 +69,6 @@ api.interceptors.response.use(
             try {
                 const token = await refreshAccessToken()
 
-                // console.log("New access token:", token)
-                // console.log("About to retry:", originalRequest)
                 return api(originalRequest)
             } catch (refreshError) {
                 console.error("Refresh failed:", refreshError)

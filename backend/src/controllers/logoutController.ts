@@ -7,7 +7,6 @@ import jwt from "jsonwebtoken"
 export const logout = async (req: Request, res: Response) => {
     try {
         const refreshToken = req.cookies.refreshToken
-        // console.log("COOKIE:", refreshToken)
 
         const decoded = jwt.verify(
             refreshToken,
@@ -19,16 +18,9 @@ export const logout = async (req: Request, res: Response) => {
 
         const refreshTokens = await RefreshToken.find({user: decoded.userId })
             .sort({ createdAt: -1, _id: -1 })
-        // console.log("NUMBER OF TOKENS:", refreshTokens.length)
 
         for(const token of refreshTokens){  
             const isMatch = await bcrypt.compare(refreshToken, token.tokenHash)
-
-            // console.log({
-            //     id: token._id,
-            //     createdAt: token.createdAt,
-            //     isMatch
-            // })
 
             if(isMatch){
                 await RefreshToken.deleteOne({_id : token._id})
@@ -39,7 +31,7 @@ export const logout = async (req: Request, res: Response) => {
 
         res.clearCookie("refreshToken",{
             httpOnly: true,
-            secure: false,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "strict"
         })
 

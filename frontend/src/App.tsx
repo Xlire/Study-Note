@@ -246,11 +246,6 @@ function App() {
         setIsChatOpen(true)
     }
 
-    const handleAskAI = () => {
-    setSelectedText("")
-    setIsChatOpen(true)
-    }
-
     const isLoggedIn = accessToken !== null
 
     return (
@@ -293,7 +288,6 @@ function App() {
                 explaining={explaining}
                 onAskAboutText={handleAskAboutText}
                 setIsChatOpen={setIsChatOpen}
-                setSelectedText={setSelectedText}
             />
             {isChatOpen && (
                 <ChatPanel

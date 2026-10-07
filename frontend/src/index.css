@@ -15,7 +15,6 @@ textarea {
     width: 100%;
     min-height: 500px;
     resize: vertical;
-    /* background-color: cadetblue; */
 }
 
 .note-item {
@@ -279,11 +278,6 @@ main > p {
     color: white;
     font-size: 14px;
     cursor: pointer;
-    /* margin: auto;
-    width: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center; */
 }
 
 .login-container button:hover {
@@ -405,7 +399,6 @@ main > p {
     background: #f5f5f5;
     white-space: pre-wrap;
     font-size: 12px;
-    /* margin-top: 16px; */
 }
 
 .chat-input {
@@ -532,4 +525,10 @@ main > p {
 .ask-text-button:hover {
     background: #e9d5ff;
     border-color: #6d28d9;
+}
+
+.ai-usage {
+    font-size: 12px;
+    color: #777;
+    align-self: center;
 }

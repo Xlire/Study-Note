@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react"
-import api from "../lib/api"
+import api, {getAiUsesRemaining} from "../lib/api"
 import ReactMarkdown from "react-markdown"
 import { BeatLoader } from "react-spinners"
+import toast from "react-hot-toast"
 
 interface ChatPanelProps {
     noteContent: string,
@@ -24,6 +25,9 @@ function ChatPanel({
     const [message, setMessage] = useState("")
     const [messages, setMessages] = useState<ChatMessage[]>([])
     const [isSendingChat, setIsSendingChat] = useState(false)
+    const [aiUsesRemaining, setAiUsesRemaining] = useState<number | null>(
+        getAiUsesRemaining()
+    ) 
 
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -52,6 +56,8 @@ function ChatPanel({
                 question : message
             })
 
+            setAiUsesRemaining(getAiUsesRemaining())
+
             const aiMessage: ChatMessage = {
                 role: "ai",
                 content: response.data.answer
@@ -59,8 +65,13 @@ function ChatPanel({
 
             setMessages(prev => [...prev, aiMessage])
             setSelectedText("")
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error chatting with AI:", error)
+
+            if (error.response?.status === 429) {
+                toast.error("You've reached your AI usage limit. Please try again later.")
+                return
+            }
 
             const errorMessage: ChatMessage = {
                 role: "ai",
@@ -77,7 +88,12 @@ function ChatPanel({
         <div className="chat-panel">
             <div className="chat-header">
                 <h2>Study Assistant</h2>
-
+                
+                {aiUsesRemaining !== null && (
+                    <div className="ai-usage">
+                        AI uses left: {aiUsesRemaining} / 20
+                    </div>
+                )}
                 <button onClick={onClose}>
                     ×
                 </button>

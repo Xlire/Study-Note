@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from 'cors'
 import authenticate from "./middleware/authenticate";
 import cookieParser from "cookie-parser";
+import helmet from "helmet"
 
 import connectDB from "./config/db";
 import noteRoutes from "./routes/noteRoutes";
@@ -15,6 +16,7 @@ import aiRoutes from "./routes/aiRoutes";
 dotenv.config();
 
 const app = express();
+app.use(helmet())
 const PORT = process.env.PORT || 5001;
 
 const dns = require("node:dns");
@@ -22,11 +24,12 @@ const dns = require("node:dns");
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 app.use(cors({
-    origin: "http://localhost:5173",
-    credentials: true
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+    exposedHeaders: ["RateLimit", "RateLimit-Policy"]
 }))
 
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }))
 app.use(cookieParser())
 
 app.get("/", (req, res) => {
