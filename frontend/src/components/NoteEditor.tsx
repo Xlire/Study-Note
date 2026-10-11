@@ -1,4 +1,4 @@
-import type { Note } from "../types";
+import type { Note, GeneratedQuiz } from "../types";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown"
 
@@ -18,6 +18,9 @@ interface NoteEditorProps {
     explaining: boolean,
     onAskAboutText: (text: string) => void,
     setIsChatOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    onGenerateQuiz: () => void,
+    quiz: GeneratedQuiz | null,
+    isGeneratingQuiz: boolean,
 }
 
 const NoteEditor = ({
@@ -36,9 +39,21 @@ const NoteEditor = ({
     explaining,
     onAskAboutText,
     setIsChatOpen,
+    onGenerateQuiz,
+    quiz,
+    isGeneratingQuiz,
 } : NoteEditorProps) =>
 {
     const [currentSelection, setCurrentSelection] = useState("")
+    const [answers, setAnswers] = useState<Record<number, "A" | "B" | "C">>({})
+    const [submitted, setSubmitted] = useState(false)
+
+    const handleGenerateQuiz = () => {
+        setAnswers({})
+        setSubmitted(false)
+        onGenerateQuiz()
+    }
+
     return(
     <main>
         {selectedNote ? (
@@ -104,6 +119,9 @@ const NoteEditor = ({
                 <button className="summarize-button" onClick={onExplain} disabled={explaining || !selectedNote.content.trim()}>
                     {explaining? "Explaining..." : "Explain note"}
                 </button>
+                <button className="summarize-button" onClick={handleGenerateQuiz} disabled={isGeneratingQuiz || !selectedNote.content.trim()}>
+                    {isGeneratingQuiz? "Generating..." : "Generate quiz"}
+                </button>
                 <button className="ai-button" onClick={() => (setIsChatOpen(prev => !prev))}>
                     Ask AI
                 </button>
@@ -125,6 +143,72 @@ const NoteEditor = ({
                     </div>
             )
             }
+            {quiz && (
+                    <div className="ai-summary">
+                        <h3>Practice Quiz</h3>
+                        
+                        {quiz.questions.map((question, index) => (
+                            <div key={index} className="quiz-question">
+                                <h4>
+                                    {index + 1}. {question.question}
+                                </h4>
+
+                                {(["A","B","C"] as const).map((option) => (
+                                    <label 
+                                        key={option}
+                                        className="quiz-option"
+                                    >
+                                        <input
+                                            type="radio"
+                                            name={`question-${index}`}
+                                            value={option}
+                                            checked={answers[index] === option}
+                                            disabled={submitted}
+                                            onChange={() => setAnswers((prev) => ({
+                                                ...prev,
+                                                [index]: option
+                                            }))
+                                            }
+                                        />
+                                        {" "}{option}. {question.options[option]}
+                                    </label>
+                                ))
+                                }
+
+                                {submitted && (
+                                    <div className="quiz-feedback">
+                                        <p>
+                                            <strong>
+                                                {answers[index] === question.correctAnswer ? "Correct" : "Incorrect"}
+                                            </strong>
+                                        </p>
+                                        <p>
+                                            Correct answer: {question.correctAnswer}.{" "}{question.options[question.correctAnswer]}
+                                        </p>
+                                        <p>{question.explanation}</p>
+                                    </div>
+                                )}
+                            </div>
+                    ))}
+                    {!submitted ? (
+                                    <button
+                                        className="quiz-submit-button"
+                                        disabled={Object.keys(answers).length !== quiz.questions.length}
+                                        onClick={() => setSubmitted(true)}
+                                    >
+                                        Submit Answers
+                                    </button>
+                                ) : (
+                                    <h4 className="quiz-score">
+                                        Score:{" "}
+                                        {quiz.questions.filter(
+                                            (question, index) =>
+                                                answers[index] === question.correctAnswer
+                                        ).length}{" "}
+                                        / {quiz.questions.length}
+                                    </h4>
+                                )}
+                    </div>)}
             </>
         ) : (
             <p>Select a note</p>

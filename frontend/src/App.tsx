@@ -1,6 +1,6 @@
 import { useState, useEffect} from "react";
 import api, { refreshAccessToken, setApiAccessToken, setAuthExpiredHandler } from "./lib/api";
-import type {Note} from "./types"
+import type {Note, GeneratedQuiz} from "./types"
 import toast, {Toaster} from 'react-hot-toast'
 
 import Sidebar from "./components/Sidebar";
@@ -8,6 +8,7 @@ import NoteEditor from "./components/NoteEditor"
 import Login from "./components/Login";
 import ChatPanel from "./components/ChatPanel";
 import Register from "./components/Register";
+
 
 function App() {
     const [notes, setNotes] = useState<Note[]>([])
@@ -22,6 +23,8 @@ function App() {
     const [isChatOpen, setIsChatOpen] = useState(false)
     const [selectedText, setSelectedText] = useState("")
     const [showRegister, setShowRegister] = useState(false)
+    const [isGeneratingQuiz, setIsGeneratingQuiz] = useState(false)
+    const [quiz, setQuiz] = useState<GeneratedQuiz | null>(null)
 
     useEffect(() => {
         const restoreSession = async () => {
@@ -166,6 +169,7 @@ function App() {
         setOriginalContent(note.content)
         setSummary("")
         setExplain("")
+        setQuiz(null)
     }
 
     const handleTitleChange = (title:string) => {
@@ -248,6 +252,32 @@ function App() {
         setIsChatOpen(true)
     }
 
+    const handleGenerateQuiz = async () => {
+        if(!selectedNote) return
+
+        if(!selectedNote.content.trim()){
+            toast.error("Note content is empty")
+            return
+        }
+
+        setIsGeneratingQuiz(true)
+        setQuiz(null)
+
+        try{
+            const response = await api.post("/ai/quiz", {
+                content: selectedNote.content
+            })
+            
+            setQuiz(response.data)
+        } catch(error){
+            console.error("Error generating quiz:", error)
+            toast.error("Failed to generate quiz")
+        } finally {
+            setIsGeneratingQuiz(false)
+        }
+        
+    }
+
     const isLoggedIn = accessToken !== null
 
     return (
@@ -290,6 +320,9 @@ function App() {
                 explaining={explaining}
                 onAskAboutText={handleAskAboutText}
                 setIsChatOpen={setIsChatOpen}
+                onGenerateQuiz={handleGenerateQuiz}
+                quiz={quiz}
+                isGeneratingQuiz={isGeneratingQuiz}
             />
             {isChatOpen && (
                 <ChatPanel

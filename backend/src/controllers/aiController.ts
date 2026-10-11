@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { summarizeText, explainText, chatAboutText } from "../services/gemini"
+import { summarizeText, explainText, chatAboutText, generateQuiz } from "../services/gemini"
 
 export const summarize = async (req: Request, res: Response) => {
     try{ 
@@ -69,6 +69,27 @@ export const chat = async (req: Request, res: Response) => {
 
         return res.status(500).json({
             message: "Failed to generate answer"
+        })
+    }
+}
+
+export async function generateNoteQuiz(req: Request, res: Response) {
+    try{
+        const {content} = req.body
+        
+         if (typeof content !== "string" || !content.trim()) {
+            return res.status(400).json({
+                message: "Content is required"
+            })
+        }
+
+        const quiz = await generateQuiz(content)
+
+        return res.status(200).json(quiz)
+    } catch(error){
+        console.error("Error generating quiz:", error)
+        return res.status(500).json({
+            message: "Failed to generate quiz"
         })
     }
 }

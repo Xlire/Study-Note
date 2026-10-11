@@ -1,7 +1,8 @@
 import express from "express"
-import { summarize, explain, chat} from "../controllers/aiController"
+import { summarize, explain, chat, generateNoteQuiz} from "../controllers/aiController"
 import { aiLimiter } from "../middleware/rateLimit"
 import { validateString } from "../middleware/validateBody"
+
 
 const router = express.Router()
 
@@ -12,5 +13,8 @@ router.post("/chat",
     validateString("question", 5000),
     validateString("selectedText", 100000, false),aiLimiter,
      chat)
+router.post("/quiz",
+    validateString("content", 100000),aiLimiter,
+    generateNoteQuiz)
 
 export default router
