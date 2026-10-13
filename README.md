@@ -22,13 +22,17 @@ The application is deployed using Render.
 
 ![AI summarization](./screenshots/ai-summary.png)
 
+### Quiz Generation
+
+![Quiz generation](./screenshots/quiz-generation.png)
+
 ---
 
 ## Features
 
 * 📝 Create, edit, and delete study notes
 * 📚 Manage personal study notes
-* 🤖 AI note summarization, explanation, and chat
+* 🤖 AI note summarization, explanation, quiz generation and chat
 * 🔐 User registration and login
 * 🔑 JWT-based authentication with access and refresh tokens
 * 🍪 Secure HTTP-only refresh-token cookies
@@ -165,6 +169,10 @@ Users can ask the AI to explain the content of a note in a clearer and easier-to
 Users can chat with the AI about the note to get better understanding of the content, or even asking questions outside the scope of it.
 
 AI endpoints are protected by authentication and rate limiting to help control API usage.
+
+### Quiz Generation
+
+Users can generate a multiple-choice quiz based on their note content to test their understanding. Each quiz contains three questions, each with three answer options (A, B, and C), along with the correct answer and an explanation.
 
 ---
 
