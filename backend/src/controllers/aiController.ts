@@ -87,6 +87,12 @@ export async function generateNoteQuiz(req: Request, res: Response) {
 
         return res.status(200).json(quiz)
     } catch(error){
+        if (error instanceof Error && error.message === "NOTE_TOO_SHORT") {
+            return res.status(400).json({
+                message: "Note is too short to generate a quiz. Please add more content."
+            })
+        }
+
         console.error("Error generating quiz:", error)
         return res.status(500).json({
             message: "Failed to generate quiz"

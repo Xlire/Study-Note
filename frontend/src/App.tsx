@@ -1,7 +1,8 @@
-import { useState, useEffect} from "react";
+import { useState, useEffect, useCallback} from "react";
 import api, { refreshAccessToken, setApiAccessToken, setAuthExpiredHandler } from "./lib/api";
 import type {Note, GeneratedQuiz} from "./types"
 import toast, {Toaster} from 'react-hot-toast'
+import axios from "axios";
 
 import Sidebar from "./components/Sidebar";
 import NoteEditor from "./components/NoteEditor"
@@ -26,6 +27,23 @@ function App() {
     const [isGeneratingQuiz, setIsGeneratingQuiz] = useState(false)
     const [quiz, setQuiz] = useState<GeneratedQuiz | null>(null)
 
+    const clearUserState = useCallback(() => {
+        setAccessToken(null)
+        setApiAccessToken(null)
+        setNotes([])
+        setSelectedNote(undefined)
+        setOriginalContent("")
+        setOriginalTitle("")
+        setSummary("")
+        setIsSummarizing(false)
+        setExplain("")
+        setExplaining(false)
+        setIsChatOpen(false)
+        setSelectedText("")
+        setQuiz(null)
+        setIsGeneratingQuiz(false)
+    }, [])
+
     useEffect(() => {
         const restoreSession = async () => {
         try{   
@@ -40,14 +58,14 @@ function App() {
 
     useEffect(() => {
         setAuthExpiredHandler(() =>{
-            setAccessToken(null)
+            clearUserState()
             toast.error("Your session has expired. Please log in again")
         })
 
         return () => {
             setAuthExpiredHandler(null)
         }
-    },[])
+    },[clearUserState])
 
     useEffect(()=>{
         
@@ -190,9 +208,8 @@ function App() {
 
     const handleLogOut = async () =>{
         try{
-            await api.post("/logout")
-            setAccessToken(null)
-            setApiAccessToken(null)
+            await api.post("/logout")  
+            clearUserState()
         } catch(error){
             console.error("Error in log out:", error)
             toast.error("Failed to log out")
@@ -271,7 +288,13 @@ function App() {
             setQuiz(response.data)
         } catch(error){
             console.error("Error generating quiz:", error)
-            toast.error("Failed to generate quiz")
+
+            if(axios.isAxiosError(error) && error.response?.status === 400){
+                toast.error(error.response.data.message)
+            } else{
+                toast.error("Failed to generate quiz")
+            }
+            
         } finally {
             setIsGeneratingQuiz(false)
         }

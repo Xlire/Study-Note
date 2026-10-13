@@ -123,6 +123,10 @@ If specific text was highlighted, pay particular attention to it.`
 }
 
 export async function generateQuiz(content: string): Promise<GeneratedQuiz> {
+    if(content.trim().length < 150){
+        throw new Error("NOTE_TOO_SHORT")
+    }
+
     const response = await ai.models.generateContent({
         model: "gemini-3.5-flash-lite",
         config: {
